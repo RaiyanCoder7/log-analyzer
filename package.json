@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "analyze": "ts-node src/index.ts",
+    "generate": "ts-node scripts/generateLogs.ts"
   },
   "keywords": [],
   "author": "",
