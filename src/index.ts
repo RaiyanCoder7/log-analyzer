@@ -13,6 +13,7 @@ const lines = content.split("\n");
 
 let parsed = 0;
 let malformed = 0;
+let missingStatus = 0;
 
 const endpointCount: Record<string, number> = {};
 const statusCount: Record<string, number> = {};
@@ -24,7 +25,7 @@ for (const line of lines) {
     continue;
   }
 
-  const parts = line.split(" ");
+  const parts = line.trim().split(/\s+/);
 
   if (parts.length < 6) {
     malformed++;
@@ -33,6 +34,9 @@ for (const line of lines) {
 
   const endpoint = parts[3];
   const status = parts[4];
+  if (status === "-") {
+  missingStatus++;
+  }
   const responseTimeRaw = parts[5];
 
   endpointCount[endpoint] =
@@ -63,6 +67,7 @@ for (const line of lines) {
 
 console.log("Parsed lines:", parsed);
 console.log("Malformed lines:", malformed);
+console.log("Missing status codes:", missingStatus);
 
 console.log("\nEndpoint counts:");
 console.log(endpointCount);
