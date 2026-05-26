@@ -25,19 +25,47 @@ for (const line of lines) {
     continue;
   }
 
-  const parts = line.trim().split(/\s+/);
+  // variables for BOTH parsers
+  let endpoint = "";
+  let status = "";
+  let responseTimeRaw = "";
 
-  if (parts.length < 6) {
-    malformed++;
-    continue;
+  // JSON LOG PARSER
+  if (line.trim().startsWith("{")) {
+
+    try {
+      const log = JSON.parse(line);
+
+      endpoint = log.path;
+      status = String(log.status);
+      responseTimeRaw = log.responseTime;
+    }
+    catch {
+      malformed++;
+      continue;
+    }
+
   }
 
-  const endpoint = parts[3];
-  const status = parts[4];
+  // NORMAL LOG PARSER
+  else {
+
+    const parts = line.trim().split(/\s+/);
+
+    if (parts.length < 6) {
+      malformed++;
+      continue;
+    }
+
+    endpoint = parts[3];
+    status = parts[4];
+    responseTimeRaw = parts[5];
+  }
+
+  // missing status check
   if (status === "-") {
-  missingStatus++;
+    missingStatus++;
   }
-  const responseTimeRaw = parts[5];
 
   endpointCount[endpoint] =
     (endpointCount[endpoint] || 0) + 1;
@@ -48,16 +76,22 @@ for (const line of lines) {
   let responseTime = 0;
 
   if (responseTimeRaw.endsWith("ms")) {
+
     responseTime = parseFloat(
       responseTimeRaw.replace("ms", "")
     );
+
   }
   else if (responseTimeRaw.endsWith("s")) {
+
     responseTime =
       parseFloat(responseTimeRaw.replace("s", "")) * 1000;
+
   }
   else {
+
     responseTime = parseFloat(responseTimeRaw);
+
   }
 
   totalResponseTime += responseTime;

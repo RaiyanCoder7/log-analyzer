@@ -3,3 +3,4 @@
 INVALID LINE HERE
 2024-03-15T14:23:04Z 192.168.1.42 GET /api/users/12 200 53ms
 2024-03-15T14:23:07Z 192.168.1.42 GET /api/test - 120ms
+{"timestamp":"2024-03-15T14:23:01Z","ip":"192.168.1.42","method":"GET","path":"/api/json","status":200,"responseTime":"300ms"}
