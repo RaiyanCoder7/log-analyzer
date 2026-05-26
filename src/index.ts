@@ -15,6 +15,9 @@ let parsed = 0;
 let malformed = 0;
 
 const endpointCount: Record<string, number> = {};
+const statusCount: Record<string, number> = {};
+
+let totalResponseTime = 0;
 
 for (const line of lines) {
   if (!line.trim()) {
@@ -29,9 +32,31 @@ for (const line of lines) {
   }
 
   const endpoint = parts[3];
+  const status = parts[4];
+  const responseTimeRaw = parts[5];
 
   endpointCount[endpoint] =
     (endpointCount[endpoint] || 0) + 1;
+
+  statusCount[status] =
+    (statusCount[status] || 0) + 1;
+
+  let responseTime = 0;
+
+  if (responseTimeRaw.endsWith("ms")) {
+    responseTime = parseFloat(
+      responseTimeRaw.replace("ms", "")
+    );
+  }
+  else if (responseTimeRaw.endsWith("s")) {
+    responseTime =
+      parseFloat(responseTimeRaw.replace("s", "")) * 1000;
+  }
+  else {
+    responseTime = parseFloat(responseTimeRaw);
+  }
+
+  totalResponseTime += responseTime;
 
   parsed++;
 }
@@ -41,3 +66,15 @@ console.log("Malformed lines:", malformed);
 
 console.log("\nEndpoint counts:");
 console.log(endpointCount);
+
+console.log("\nStatus counts:");
+console.log(statusCount);
+
+const averageResponseTime =
+  totalResponseTime / parsed;
+
+console.log(
+  "\nAverage Response Time:",
+  averageResponseTime.toFixed(2),
+  "ms"
+);
